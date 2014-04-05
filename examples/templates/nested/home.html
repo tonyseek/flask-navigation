@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nested Example</title>
+</head>
+<body>
+  {% block navbar %}
+  <ul>
+    {% for item in nav['top'] %}
+    <li class="{{ 'active' if item.is_active else '' }}">
+      <a href="{{ item.url }}">{{ item.label }}</a>
+      {% if item.children %}
+        <ul>
+          {% for child_item in item.children %}
+          <li>{{ child_item.label }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endblock %}
+  {% block content %}
+  {% endblock %}
+</body>
+</html>
