@@ -1,6 +1,6 @@
 import collections
 
-from flask import url_for
+from flask import url_for, request
 
 
 class Item(object):
@@ -46,6 +46,13 @@ class Item(object):
         if self._url is None:
             return url_for(self.endpoint, **self.args)
         return self._url
+
+    @property
+    def is_active(self):
+        is_internal = (self._url is None)
+        has_same_endpoint = (request.endpoint == self.endpoint)
+        has_same_args = (request.view_args == self.args)
+        return is_internal and has_same_endpoint and has_same_args
 
 
 class ItemCollection(collections.MutableSequence):
