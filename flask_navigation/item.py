@@ -1,7 +1,6 @@
 import collections
 
 from flask import url_for, request
-from werkzeug.utils import cached_property
 
 from .utils import freeze_dict
 
@@ -57,7 +56,7 @@ class Item(object):
         has_same_args = (request.view_args == self.args)
         return is_internal and has_same_endpoint and has_same_args
 
-    @cached_property
+    @property
     def ident(self):
         return self.endpoint, freeze_dict(self.args)
 
