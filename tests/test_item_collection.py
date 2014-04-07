@@ -1,20 +1,22 @@
 import collections
 
 from pytest import fixture, raises
+from mock import Mock
 
 from flask.ext.navigation.item import ItemCollection
 
 
-@fixture
-def item_type():
-    return collections.namedtuple('Item', ['endpoint'])
+class Item(collections.namedtuple('Item', ['endpoint'])):
+    @property
+    def ident(self):
+        return self.endpoint, ()
 
 
 @fixture
-def items(item_type):
-    items = {'lumpy': item_type('lumpy'),
-             'nutty': item_type('nutty'),
-             'cuddles': item_type('cuddles')}
+def items():
+    items = {'lumpy': Item('lumpy'),
+             'nutty': Item('nutty'),
+             'cuddles': Item('cuddles')}
     return items
 
 
@@ -28,7 +30,7 @@ def test_creation(items):
     assert len(c2) == 1
 
 
-def test_sequence(items, item_type):
+def test_sequence(items):
     c = ItemCollection()
     raises(KeyError, lambda: c['cuddles'])
     raises(IndexError, lambda: c[0])
@@ -36,41 +38,52 @@ def test_sequence(items, item_type):
 
     c.append(items['cuddles'])
     assert len(c) == 1
-    assert c['cuddles'] == item_type('cuddles')
-    assert c[0] == item_type('cuddles')
+    assert c['cuddles'] == Item('cuddles')
+    assert c[0] == Item('cuddles')
 
     c.extend([items['nutty'], items['lumpy']])
     assert len(c) == 3
-    assert c['cuddles'] == item_type('cuddles')
-    assert c['nutty'] == item_type('nutty')
-    assert c['lumpy'] == item_type('lumpy')
-    assert c[0] == item_type('cuddles')
-    assert c[1] == item_type('nutty')
-    assert c[2] == item_type('lumpy')
+    assert c['cuddles'] == Item('cuddles')
+    assert c['nutty'] == Item('nutty')
+    assert c['lumpy'] == Item('lumpy')
+    assert c[0] == Item('cuddles')
+    assert c[1] == Item('nutty')
+    assert c[2] == Item('lumpy')
 
     del c[1]
     raises(KeyError, lambda: c['nutty'])
     raises(IndexError, lambda: c[2])
     assert len(c) == 2
-    assert c['cuddles'] == item_type('cuddles')
-    assert c['lumpy'] == item_type('lumpy')
-    assert c[0] == item_type('cuddles')
-    assert c[1] == item_type('lumpy')
+    assert c['cuddles'] == Item('cuddles')
+    assert c['lumpy'] == Item('lumpy')
+    assert c[0] == Item('cuddles')
+    assert c[1] == Item('lumpy')
 
     c.insert(0, items['nutty'])
     assert len(c) == 3
-    assert c[0] == item_type('nutty')
-    assert c[1] == item_type('cuddles')
-    assert c[2] == item_type('lumpy')
+    assert c[0] == Item('nutty')
+    assert c[1] == Item('cuddles')
+    assert c[2] == Item('lumpy')
 
-    c[2] = item_type('happy-tree')
+    c[2] = Item('happy-tree')
     assert len(c) == 3
-    assert c[2] == item_type('happy-tree')
-    assert c['happy-tree'] == item_type('happy-tree')
+    assert c[2] == Item('happy-tree')
+    assert c['happy-tree'] == Item('happy-tree')
     raises(KeyError, lambda: c['lumpy'])
 
     with raises(TypeError):
-        c['pu'] = item_type('pu')
+        c['pu'] = Item('pu')
 
     with raises(IndexError):
-        c[3] = item_type('pu')
+        c[3] = Item('pu')
+
+
+def test_getitem_with_args():
+    item_with_args = Mock(endpoint='nutty', args={'i': 12},
+                          ident=('nutty', (('i', 12),)))
+    c = ItemCollection([item_with_args])
+
+    raises(KeyError, lambda: c['nutty'])
+    raises(KeyError, lambda: c['nutty', {'i': 1}])
+
+    assert c['nutty', {'i': 12}] == item_with_args

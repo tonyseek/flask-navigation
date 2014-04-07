@@ -57,3 +57,11 @@ def test_is_active(app, items):
         assert not items['boom1'].is_active
         assert not items['boom2'].is_active
         assert not items['example'].is_active
+
+
+def test_ident(items):
+    assert items['biu'].endpoint != items['boom1'].endpoint
+    assert items['boom1'].endpoint == items['boom2'].endpoint
+
+    assert items['biu'].ident != items['boom1'].ident
+    assert items['boom1'].ident != items['boom2'].ident
