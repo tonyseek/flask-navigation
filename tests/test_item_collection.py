@@ -87,3 +87,17 @@ def test_getitem_with_args():
     raises(KeyError, lambda: c['nutty', {'i': 1}])
 
     assert c['nutty', {'i': 12}] == item_with_args
+
+
+def test_iterable(items):
+    c = ItemCollection([items['cuddles'], items['lumpy']])
+    iterable = iter(c)
+
+    item = next(iterable)
+    assert item.endpoint == 'cuddles'
+
+    item = next(iterable)
+    assert item.endpoint == 'lumpy'
+
+    with raises(StopIteration):
+        next(iterable)

@@ -62,7 +62,8 @@ class Item(object):
         return self.endpoint, freeze_dict(self.args)
 
 
-class ItemCollection(collections.MutableSequence):
+class ItemCollection(collections.MutableSequence,
+                     collections.Iterable):
     """The collection of navigation items.
 
     This collection is a mutable sequence. All items have order index, and
@@ -120,6 +121,9 @@ class ItemCollection(collections.MutableSequence):
 
     def __len__(self):
         return len(self._items)
+
+    def __iter__(self):
+        return iter(self._items)
 
     def insert(self, index, item):
         self._items.insert(index, item)
