@@ -34,3 +34,34 @@ def test_basic(app, items):
     assert items['example'].label == u'Example'
     assert items['example'].args == {}
     assert items['example'].url == '//example.com'
+
+
+def test_is_active(app, items):
+    with app.test_client() as client:
+        client.get('/biu/boom/2')
+        assert not items['biu'].is_active
+        assert not items['boom1'].is_active
+        assert items['boom2'].is_active
+        assert not items['example'].is_active
+
+    with app.test_client() as client:
+        client.get('/biu/boom/1')
+        assert not items['biu'].is_active
+        assert items['boom1'].is_active
+        assert not items['boom2'].is_active
+        assert not items['example'].is_active
+
+    with app.test_client() as client:
+        client.get('/biu/biu')
+        assert items['biu'].is_active
+        assert not items['boom1'].is_active
+        assert not items['boom2'].is_active
+        assert not items['example'].is_active
+
+
+def test_ident(items):
+    assert items['biu'].endpoint != items['boom1'].endpoint
+    assert items['boom1'].endpoint == items['boom2'].endpoint
+
+    assert items['biu'].ident != items['boom1'].ident
+    assert items['boom1'].ident != items['boom2'].ident

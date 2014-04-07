@@ -1,6 +1,9 @@
 import collections
 
-from flask import url_for
+from flask import url_for, request
+from werkzeug.utils import cached_property
+
+from .utils import freeze_dict
 
 
 class Item(object):
@@ -47,6 +50,17 @@ class Item(object):
             return url_for(self.endpoint, **self.args)
         return self._url
 
+    @property
+    def is_active(self):
+        is_internal = (self._url is None)
+        has_same_endpoint = (request.endpoint == self.endpoint)
+        has_same_args = (request.view_args == self.args)
+        return is_internal and has_same_endpoint and has_same_args
+
+    @cached_property
+    def ident(self):
+        return self.endpoint, freeze_dict(self.args)
+
 
 class ItemCollection(collections.MutableSequence):
     """The collection of navigation items.
@@ -83,25 +97,30 @@ class ItemCollection(collections.MutableSequence):
     def __getitem__(self, index):
         if isinstance(index, int):
             return self._items[index]
+
+        if isinstance(index, tuple):
+            endpoint, args = index
         else:
-            return self._items_mapping[index]
+            endpoint, args = index, {}
+        ident = (endpoint, freeze_dict(args))
+        return self._items_mapping[ident]
 
     def __setitem__(self, index, item):
         # remove the old reference
         old_item = self._items[index]
-        del self._items_mapping[old_item.endpoint]
+        del self._items_mapping[old_item.ident]
 
         self._items[index] = item
-        self._items_mapping[item.endpoint] = item
+        self._items_mapping[item.ident] = item
 
     def __delitem__(self, index):
-        endpoint = self[index].endpoint
+        item = self[index]
         del self._items[index]
-        del self._items_mapping[endpoint]
+        del self._items_mapping[item.ident]
 
     def __len__(self):
         return len(self._items)
 
     def insert(self, index, item):
         self._items.insert(index, item)
-        self._items_mapping[item.endpoint] = item
+        self._items_mapping[item.ident] = item
