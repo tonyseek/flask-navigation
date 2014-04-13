@@ -58,7 +58,7 @@ class Item(object):
 
     @property
     def ident(self):
-        return self.endpoint, freeze_dict(self.args)
+        return ItemReference(self.endpoint, self.args)
 
 
 class ItemCollection(collections.MutableSequence,
@@ -96,7 +96,7 @@ class ItemCollection(collections.MutableSequence,
             endpoint, args = index
         else:
             endpoint, args = index, {}
-        ident = (endpoint, freeze_dict(args))
+        ident = ItemReference(endpoint, args)
         return self._items_mapping[ident]
 
     def __setitem__(self, index, item):
@@ -121,3 +121,18 @@ class ItemCollection(collections.MutableSequence,
     def insert(self, index, item):
         self._items.insert(index, item)
         self._items_mapping[item.ident] = item
+
+
+class ItemReference(collections.namedtuple('ItemReference', 'endpoint args')):
+    """The identity tuple of navigation item.
+
+    :param endpoint: the endpoint of view function.
+    :type endpoint: ``str``
+    :param args: the arguments of view function.
+    :type args: ``dict``
+    """
+
+    def __new__(cls, endpoint, args=()):
+        if isinstance(args, dict):
+            args = freeze_dict(args)
+        return super(cls, ItemReference).__new__(cls, endpoint, args)

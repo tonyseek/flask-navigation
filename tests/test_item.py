@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from flask.ext.navigation.item import Item
+from flask.ext.navigation.item import Item, ItemReference
 
 
 @fixture
@@ -65,3 +65,12 @@ def test_ident(items):
 
     assert items['biu'].ident != items['boom1'].ident
     assert items['boom1'].ident != items['boom2'].ident
+
+
+def test_item_reference():
+    assert ItemReference('foo').endpoint == 'foo'
+    assert ItemReference('foo').args == ()
+    assert ItemReference('foo') == ItemReference('foo', {})
+
+    assert ItemReference('bar', {'a': 1}).endpoint == 'bar'
+    assert ItemReference('bar', {'b': 2, 'a': 1}).args == (('a', 1), ('b', 2))
