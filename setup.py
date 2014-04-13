@@ -2,22 +2,18 @@ from setuptools import setup, find_packages
 from os.path import dirname, realpath, join
 
 
-CURRENT_DIR = dirname(realpath(__file__))
-
-with open(join(CURRENT_DIR, "README.rst")) as long_description_file:
-    long_description = long_description_file.read()
-
-with open(join(CURRENT_DIR, "flask_navigation/__init__.py")) as package_file:
-    version = next(eval(line.split("=")[-1])
-                   for line in package_file if line.startswith("__version__"))
+def read_long_description():
+    current_dir = dirname(realpath(__file__))
+    with open(join(current_dir, "README.rst")) as long_description_file:
+        return long_description_file.read()
 
 
 setup(
     name="Flask-Navigation",
     packages=find_packages(exclude=["tests", "docs"]),
-    version=version,
+    version='0.1.0.dev',
     description="The navigation of Flask application.",
-    long_description=long_description,
+    long_description=read_long_description(),
     author="Jiangge Zhang",
     author_email="tonyseek@gmail.com",
     url="https://github.com/tonyseek/flask-navigation",
