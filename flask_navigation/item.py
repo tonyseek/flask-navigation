@@ -1,7 +1,6 @@
 import collections
 
 from flask import url_for, request
-from werkzeug.utils import cached_property
 
 from .utils import freeze_dict
 
@@ -57,30 +56,25 @@ class Item(object):
         has_same_args = (request.view_args == self.args)
         return is_internal and has_same_endpoint and has_same_args
 
-    @cached_property
+    @property
     def ident(self):
         return self.endpoint, freeze_dict(self.args)
 
 
-class ItemCollection(collections.MutableSequence):
+class ItemCollection(collections.MutableSequence,
+                     collections.Iterable):
     """The collection of navigation items.
 
     This collection is a mutable sequence. All items have order index, and
     could be found by its endpoint name. e.g.::
 
-    >>> item_type = collections.namedtuple('Item', ['endpoint'])
-    >>>
-    >>> c = ItemCollection()
-    >>> c.append(item_type(endpoint='doge'))
-    >>>
-    >>> c['doge']
-    Item(endpoint='doge')
-    >>> c[0]
-    Item(endpoint='doge')
-    >>> c
-    ItemCollection([Item(endpoint='doge')])
-    >>> len(c)
-    1
+        c = ItemCollection()
+        c.append(Item(endpoint='doge'))
+
+        print(c['doge'])  # output: Item(endpoint='doge')
+        print(c[0])       # output: Item(endpoint='doge')
+        print(c)          # output: ItemCollection([Item(endpoint='doge')])
+        print(len(c))     # output: 1
     """
 
     def __init__(self, iterable=[]):
@@ -120,6 +114,9 @@ class ItemCollection(collections.MutableSequence):
 
     def __len__(self):
         return len(self._items)
+
+    def __iter__(self):
+        return iter(self._items)
 
     def insert(self, index, item):
         self._items.insert(index, item)

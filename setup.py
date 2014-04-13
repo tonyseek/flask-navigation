@@ -37,5 +37,5 @@ setup(
         "Framework :: Flask",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=["Flask"],
+    install_requires=["Flask", "blinker"],
 )
