@@ -68,19 +68,13 @@ class ItemCollection(collections.MutableSequence,
     This collection is a mutable sequence. All items have order index, and
     could be found by its endpoint name. e.g.::
 
-    >>> item_type = collections.namedtuple('Item', ['endpoint'])
-    >>>
-    >>> c = ItemCollection()
-    >>> c.append(item_type(endpoint='doge'))
-    >>>
-    >>> c['doge']
-    Item(endpoint='doge')
-    >>> c[0]
-    Item(endpoint='doge')
-    >>> c
-    ItemCollection([Item(endpoint='doge')])
-    >>> len(c)
-    1
+        c = ItemCollection()
+        c.append(Item(endpoint='doge'))
+
+        print(c['doge'])  # output: Item(endpoint='doge')
+        print(c[0])       # output: Item(endpoint='doge')
+        print(c)          # output: ItemCollection([Item(endpoint='doge')])
+        print(len(c))     # output: 1
     """
 
     def __init__(self, iterable=[]):
