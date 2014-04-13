@@ -32,6 +32,18 @@ def test_app(app):
     assert_navbar_exists(r)
 
 
+def test_alias(app):
+    r = app.get('/news/1024')
+    assert r.status == '200 OK'
+    assert 'News :: Page - 1024' in r
+    assert_navbar_exists(r)
+
+    r = r.click('Back')
+    assert r.status == '200 OK'
+    assert 'Welcome' in r
+    assert_navbar_exists(r)
+
+
 def assert_navbar_exists(r):
     assert 'Home' in r
     assert 'Latest News' in r
