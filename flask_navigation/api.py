@@ -1,7 +1,7 @@
 from flask.signals import appcontext_pushed
 
 from .navbar import NavigationBar
-from .item import Item as NavigationItem
+from .item import Item, ItemReference
 from .utils import BoundTypeProperty
 from .signals import navbar_created
 
@@ -10,7 +10,8 @@ class Navigation(object):
     """The navigation extension API."""
 
     Bar = BoundTypeProperty('Bar', NavigationBar)
-    Item = BoundTypeProperty('Item', NavigationItem)
+    Item = BoundTypeProperty('Item', Item)
+    ItemReference = BoundTypeProperty('ItemReference', ItemReference)
 
     def __init__(self, app=None):
         self.bars = {}
