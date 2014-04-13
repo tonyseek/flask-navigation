@@ -11,7 +11,7 @@ class Navigation(object):
 
     Bar = BoundTypeProperty('Bar', NavigationBar)
     Item = BoundTypeProperty('Item', Item)
-    ItemReference = BoundTypeProperty('ItemReference', ItemReference)
+    ItemReference = ItemReference
 
     def __init__(self, app=None):
         self.bars = {}
