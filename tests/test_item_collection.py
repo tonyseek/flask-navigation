@@ -3,7 +3,7 @@ import collections
 from pytest import fixture, raises
 from mock import Mock
 
-from flask.ext.navigation.item import ItemCollection
+from flask.ext.navigation.item import ItemCollection, ItemReference
 
 
 class Item(collections.namedtuple('Item', ['endpoint'])):
@@ -80,7 +80,7 @@ def test_sequence(items):
 
 def test_getitem_with_args():
     item_with_args = Mock(endpoint='nutty', args={'i': 12},
-                          ident=('nutty', (('i', 12),)))
+                          ident=ItemReference('nutty', {'i': 12}))
     c = ItemCollection([item_with_args])
 
     raises(KeyError, lambda: c['nutty'])

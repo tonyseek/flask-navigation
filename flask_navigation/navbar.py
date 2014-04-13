@@ -7,11 +7,11 @@ from .signals import navbar_created
 class NavigationBar(collections.Iterable):
     """The navigation bar object."""
 
-    def __init__(self, name, items=[], parent_navbar=None,
-                 parent_endpoint=None):
+    def __init__(self, name, items=[], alias={}):
         self.name = name
         self.items = ItemCollection(items)
         self.initializers = []
+        self.alias = dict(alias)
 
         # sends signal
         navbar_created.send(self.__class__, bar=self)
@@ -30,3 +30,8 @@ class NavigationBar(collections.Iterable):
         """
         self.initializers.append(fn)
         return fn
+
+    def alias_item(self, alias):
+        """Gets an item by its alias."""
+        ident = self.alias[alias]
+        return self.items[ident]

@@ -1,7 +1,7 @@
 from pytest import fixture, raises
 
 from flask.ext.navigation.navbar import NavigationBar
-from flask.ext.navigation.item import Item
+from flask.ext.navigation.item import Item, ItemReference
 
 
 @fixture
@@ -42,3 +42,20 @@ def test_initializer(navbar):
     def initialize_more_items(nav):
         return nav
     assert navbar.initializers[0] is initialize_more_items
+
+
+def test_alias_item():
+    navbar = NavigationBar('mybar', [
+        Item(u'Home', 'home'),
+        Item(u'News', 'news', args={'page': 1}),
+    ], alias={
+        'foo': ItemReference('home'),
+        'bar': ItemReference('news', {'page': 1}),
+        'egg': ItemReference('news', {'page': 2}),
+    })
+
+    assert navbar.alias_item('foo').label == u'Home'
+    assert navbar.alias_item('bar').label == u'News'
+
+    with raises(KeyError):
+        navbar.alias_item('egg')
