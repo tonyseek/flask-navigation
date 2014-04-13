@@ -29,10 +29,18 @@ class BoundTypeProperty(object):
         ...     pass
         >>> class Bar(object):
         ...     Foo = BoundTypeProperty('Foo', Foo)
+        >>>
+        >>> Bar.Foo
+        BoundTypeProperty('Foo', Foo)
         >>> bar = Bar()
         >>> bar.Foo is Foo
         False
         >>> issubclass(bar.Foo, Foo)
+        True
+        >>> egg = Bar()
+        >>> egg.Foo is bar.Foo
+        False
+        >>> egg.Foo.__bases__ == bar.Foo.__bases__ == (Foo,)
         True
 
     :param name: the name of this property.
@@ -42,6 +50,9 @@ class BoundTypeProperty(object):
     def __init__(self, name, cls):
         self.name = name
         self.cls = cls
+
+    def __repr__(self):
+        return 'BoundTypeProperty(%r, %s)' % (self.name, self.cls.__name__)
 
     def __get__(self, instance, owner):
         if instance is None:
