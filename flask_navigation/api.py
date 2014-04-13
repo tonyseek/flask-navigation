@@ -27,6 +27,8 @@ class Navigation(object):
     def init_app(self, app):
         # connects app-level signals
         appcontext_pushed.connect(self.initialize_bars, app)
+        # integrate with jinja template
+        app.jinja_env.globals['nav'] = self
 
     def initialize_bars(self, sender=None, **kwargs):
         """Calls the initializers of all bound navigation bars."""
