@@ -1,6 +1,7 @@
 import collections
 
 from .item import ItemCollection
+from .signals import navbar_created
 
 
 class NavigationBar(collections.Iterable):
@@ -11,6 +12,9 @@ class NavigationBar(collections.Iterable):
         self.name = name
         self.items = ItemCollection(items)
         self.initializers = []
+
+        # sends signal
+        navbar_created.send(self.__class__)
 
     def __iter__(self):
         return iter(self.items)
