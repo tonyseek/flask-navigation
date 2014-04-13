@@ -14,7 +14,7 @@ class NavigationBar(collections.Iterable):
         self.initializers = []
 
         # sends signal
-        navbar_created.send(self.__class__)
+        navbar_created.send(self.__class__, bar=self)
 
     def __iter__(self):
         return iter(self.items)
