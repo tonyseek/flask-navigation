@@ -14,9 +14,10 @@ navbar = nav.Bar('top', [
 ])
 
 pocket_navbar = nav.Bar('pocket', [
+    nav.Item(u'Back', endpoint='pocket'),
     nav.Item(u'Article', endpoint='pocket.article'),
     nav.Item(u'Video', endpoint='pocket.video'),
-], parent_navbar='top', parent_endpoint='pocket')
+], alias={'back': nav.ItemReference('pocket')})
 
 
 @app.route('/')
