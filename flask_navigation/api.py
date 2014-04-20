@@ -9,8 +9,16 @@ from .signals import navbar_created
 class Navigation(object):
     """The navigation extension API."""
 
+    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
+    #: The subclass of :class:`~flask.ext.navigation.navbar.NavigationBar`. It
+    #: bound with the the current instance.
     Bar = BoundTypeProperty('Bar', NavigationBar)
+
+    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
+    #: The subclass of :class:`~flask.ext.navigation.item.Item`. It bound with
+    #: the the current instance.
     Item = BoundTypeProperty('Item', Item)
+
     ItemReference = ItemReference
 
     def __init__(self, app=None):
@@ -25,10 +33,17 @@ class Navigation(object):
         return self.bars[name]
 
     def init_app(self, app):
+        """Initializes an app to work with this extension.
+
+        The app-context signals will be subscribed and the template context
+        will be initialized.
+
+        :param app: the :class:`flask.Flask` app instance.
+        """
         # connects app-level signals
         appcontext_pushed.connect(self.initialize_bars, app)
         # integrate with jinja template
-        app.jinja_env.globals['nav'] = self
+        app.add_template_global(self, 'nav')
 
     def initialize_bars(self, sender=None, **kwargs):
         """Calls the initializers of all bound navigation bars."""
