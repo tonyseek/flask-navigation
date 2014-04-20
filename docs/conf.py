@@ -109,7 +109,9 @@ html_theme = 'kr_small'
 # documentation.
 html_theme_options = {
     'github_fork': 'tonyseek/flask-navigation',
-    'index_logo': False,
+    'index_logo': 'index-logo@2x.png',
+    # a hack for retina logo
+    'index_logo_height': '50px; background-size: 340px 50px',
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
