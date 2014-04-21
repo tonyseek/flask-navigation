@@ -9,14 +9,16 @@ from .signals import navbar_created
 class Navigation(object):
     """The navigation extension API."""
 
-    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     #: The subclass of :class:`~flask.ext.navigation.navbar.NavigationBar`. It
     #: bound with the the current instance.
+    #:
+    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     Bar = BoundTypeProperty('Bar', NavigationBar)
 
-    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     #: The subclass of :class:`~flask.ext.navigation.item.Item`. It bound with
     #: the the current instance.
+    #:
+    #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     Item = BoundTypeProperty('Item', Item)
 
     ItemReference = ItemReference
