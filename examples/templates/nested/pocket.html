@@ -1,0 +1,14 @@
+{% extends 'nested/home.html' %}
+
+{% block navbar %}
+  {% with bar = nav['pocket'] %}
+    <a href="{{ bar.alias_item('back').url }}">{{ bar.parent.label }}</a>
+    <ul>
+      {% for item in bar %}
+      <li class="{{ 'active' if item.is_active else '' }}">
+        <a href="{{ item.url }}">{{ item.label }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endwith %}
+{% endblock %}
