@@ -65,10 +65,15 @@ class Item(object):
 
     @property
     def is_active(self):
-        is_internal = (self._url is None)
+        """``True`` if current request endpoint is pointed by this item."""
         has_same_endpoint = (request.endpoint == self.endpoint)
         has_same_args = (request.view_args == self.args)
-        return is_internal and has_same_endpoint and has_same_args
+        return self.is_internal and has_same_endpoint and has_same_args
+
+    @property
+    def is_internal(self):
+        """``True`` if the target url is internal of current app."""
+        return self._url is None
 
     @property
     def ident(self):
