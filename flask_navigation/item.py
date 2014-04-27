@@ -59,7 +59,7 @@ class Item(object):
 
         :type: :class:`str`
         """
-        if self._url is None:
+        if self.is_internal:
             return url_for(self.endpoint, **self.args)
         return self._url
 
@@ -68,7 +68,7 @@ class Item(object):
         """``True`` if the item should be presented as active, and ``False``
         always if the request context is not bound.
         """
-        return request and self.is_current
+        return bool(request and self.is_current)
 
     @property
     def is_internal(self):
@@ -82,12 +82,11 @@ class Item(object):
         The property should be used in a bound request context, or the
         :exception:`RuntimeError` may be raised.
         """
-        if self.is_internal:
-            has_same_endpoint = (request.endpoint == self.endpoint)
-            has_same_args = (request.view_args == self.args)
-            return has_same_endpoint and has_same_args  # matches the endpoint
-        else:
-            return self._url == request.url  # matches the whole url
+        if not self.is_internal:
+            return False  # always false for external url
+        has_same_endpoint = (request.endpoint == self.endpoint)
+        has_same_args = (request.view_args == self.args)
+        return has_same_endpoint and has_same_args  # matches the endpoint
 
     @property
     def ident(self):
