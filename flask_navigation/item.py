@@ -109,7 +109,7 @@ class Item(object):
         """``True`` if current request has same endpoint with the item.
 
         The property should be used in a bound request context, or the
-        :exception:`RuntimeError` may be raised.
+        :class:`RuntimeError` may be raised.
         """
         if not self.is_internal:
             return False  # always false for external url
