@@ -21,17 +21,20 @@ class Item(object):
     :param url: optional. If this parameter be provided, the target url of
                 this navigation will be it. The ``endpoint`` and ``args`` will
                 not been used to generate url.
+    :param html_attrs: optional. This :class:`dict` will be used for presenting
+                       html.
 
     The ``endpoint`` is the identity name of this navigation item. It will be
     unique in whole application. In mostly situation, it should be a endpoint
     name of a Flask view function.
     """
 
-    def __init__(self, label, endpoint, args=None, url=None):
+    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None):
         self.label = label
         self.endpoint = endpoint
         self._args = args
         self._url = url
+        self.html_attrs = html_attrs
 
     @property
     def args(self):
