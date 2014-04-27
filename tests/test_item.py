@@ -102,3 +102,22 @@ def test_html_representation(app, items):
         # invalid format_spec
         with raises(ValueError):
             str(Markup('{0:foo}').format(items['biu']))
+
+
+def test_html_representation_with_class(app):
+    biu_with_class = Item(
+        u'Biu', endpoint='biu.biu',
+        html_attrs={'class': ['icon', 'icon-biu'], 'data-icon': 'biu'})
+    boom_with_class = Item(
+        u'Boom', endpoint='biu.boom', args={'num': 1},
+        html_attrs={'class': ['icon', 'icon-boom'], 'data-icon': 'boom'})
+
+    with app.test_client() as client:
+        client.get('/biu/biu')
+
+        assert str(Markup(biu_with_class)) == (
+            '<a class="icon icon-biu active" data-icon="biu"'
+            ' href="/biu/biu">Biu</a>')
+        assert str(Markup(boom_with_class)) == (
+            '<a class="icon icon-boom" data-icon="boom"'
+            ' href="/biu/boom/1">Boom</a>')
