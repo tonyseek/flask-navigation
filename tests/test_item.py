@@ -1,4 +1,5 @@
 from pytest import fixture
+from flask import Markup
 
 from flask.ext.navigation.item import Item, ItemReference
 
@@ -74,3 +75,12 @@ def test_item_reference():
 
     assert ItemReference('bar', {'a': 1}).endpoint == 'bar'
     assert ItemReference('bar', {'b': 2, 'a': 1}).args == (('a', 1), ('b', 2))
+
+
+def test_html_representation(app, items):
+    with app.test_client() as client:
+        client.get('/biu/biu')
+        assert str(Markup(items['biu'])) == \
+            '<a class="active" href="/biu/biu">Biu</a>'
+        assert str(Markup(items['boom1'])) == \
+            '<a href="/biu/boom/1">Boom</a>'

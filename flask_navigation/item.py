@@ -1,8 +1,8 @@
 import collections
 
-from flask import url_for, request
+from flask import url_for, request, Markup
 
-from .utils import freeze_dict
+from .utils import freeze_dict, join_html_attrs
 
 
 class Item(object):
@@ -21,8 +21,8 @@ class Item(object):
     :param url: optional. If this parameter be provided, the target url of
                 this navigation will be it. The ``endpoint`` and ``args`` will
                 not been used to generate url.
-    :param html_attrs: optional. This :class:`dict` will be used for presenting
-                       html.
+    :param html_attrs: optional. This :class:`dict` will be used for
+                       representing html.
 
     The ``endpoint`` is the identity name of this navigation item. It will be
     unique in whole application. In mostly situation, it should be a endpoint
@@ -34,7 +34,25 @@ class Item(object):
         self.endpoint = endpoint
         self._args = args
         self._url = url
-        self.html_attrs = html_attrs
+        self.html_attrs = {} if html_attrs is None else html_attrs
+
+    def __html__(self):
+        attrs = dict(self.html_attrs)
+
+        # adds ``active`` to class list
+        html_class = attrs.get('class', [])
+        if self.is_active:
+            html_class.append('active')
+
+        # joins class list
+        attrs['class'] = ' '.join(html_class)
+        if not attrs['class']:
+            del attrs['class']
+        attrs['href'] = self.url
+        attrs_template, attrs_values = join_html_attrs(attrs)
+
+        return Markup('<a %s>{label}</a>' % attrs_template).format(
+            *attrs_values, label=self.label)
 
     @property
     def args(self):
