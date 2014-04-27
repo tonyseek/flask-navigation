@@ -54,6 +54,14 @@ class Item(object):
         return Markup('<a %s>{label}</a>' % attrs_template).format(
             *attrs_values, label=self.label)
 
+    def __html_format__(self, format_spec):
+        if format_spec == 'li':
+            li_attrs = Markup(' class="active"') if self.is_active else ''
+            return Markup('<li{0}>{1}</li>').format(li_attrs, self.__html__())
+        elif format_spec:
+            raise ValueError('Invalid format spec')
+        return self.__html__()
+
     @property
     def args(self):
         """The arguments which will be passed to ``url_for``.

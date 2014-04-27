@@ -1,4 +1,4 @@
-from pytest import fixture
+from pytest import fixture, raises
 from flask import Markup
 
 from flask.ext.navigation.item import Item, ItemReference
@@ -80,7 +80,25 @@ def test_item_reference():
 def test_html_representation(app, items):
     with app.test_client() as client:
         client.get('/biu/biu')
+
+        # without format_spec
         assert str(Markup(items['biu'])) == \
             '<a class="active" href="/biu/biu">Biu</a>'
         assert str(Markup(items['boom1'])) == \
             '<a href="/biu/boom/1">Boom</a>'
+
+        # "li" as format_spec
+        assert str(Markup('{0:li}').format(items['biu'])) == \
+            '<li class="active"><a class="active" href="/biu/biu">Biu</a></li>'
+        assert str(Markup('{0:li}').format(items['boom1'])) == \
+            '<li><a href="/biu/boom/1">Boom</a></li>'
+
+        # default format_spec
+        assert str(Markup('{0:}').format(items['biu'])) == \
+            '<a class="active" href="/biu/biu">Biu</a>'
+        assert str(Markup('{0:}').format(items['boom1'])) == \
+            '<a href="/biu/boom/1">Boom</a>'
+
+        # invalid format_spec
+        with raises(ValueError):
+            str(Markup('{0:foo}').format(items['biu']))
