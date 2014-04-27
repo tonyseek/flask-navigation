@@ -65,15 +65,29 @@ class Item(object):
 
     @property
     def is_active(self):
-        """``True`` if current request endpoint is pointed by this item."""
-        has_same_endpoint = (request.endpoint == self.endpoint)
-        has_same_args = (request.view_args == self.args)
-        return self.is_internal and has_same_endpoint and has_same_args
+        """``True`` if the item should be presented as active, and ``False``
+        always if the request context is not bound.
+        """
+        return request and self.is_current
 
     @property
     def is_internal(self):
         """``True`` if the target url is internal of current app."""
         return self._url is None
+
+    @property
+    def is_current(self):
+        """``True`` if current request has same endpoint with the item.
+
+        The property should be used in a bound request context, or the
+        :exception:`RuntimeError` may be raised.
+        """
+        if self.is_internal:
+            has_same_endpoint = (request.endpoint == self.endpoint)
+            has_same_args = (request.view_args == self.args)
+            return has_same_endpoint and has_same_args  # matches the endpoint
+        else:
+            return self._url == request.url  # matches the whole url
 
     @property
     def ident(self):
