@@ -29,7 +29,7 @@ Create Navigation Bar
 
 ::
 
-    navbar_top = nav.Bar('top', [
+    nav.Bar('top', [
         nav.Item('Home', 'index'),
         nav.Item('Latest News', 'news', {'page': 1}),
     ])
@@ -48,8 +48,26 @@ The created navigation bars are accessible in any template with app context
 
     <ul>
         {% for item in nav.top %}
-        <li class="{{ 'current' if item.is_active else '' }}">
+        <li class="{{ 'active' if item.is_active else '' }}">
             <a href="{{ item.url }}">{{ item.label }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+The pre-defined html attributes is available too::
+
+    nav.Bar('top', [
+        nav.Item('Home', 'index', html_attrs={'class': ['home']}),
+        nav.Item('Latest News', 'news', {'page': 1},
+                 html_attrs={'class': ['news']}),
+    ])
+
+.. code-block:: html+jinja
+
+    <ul>
+        {% for item in nav.top %}
+        <li class="{{ 'active' if item.is_active else '' }}">
+            {{ item }}
         </li>
         {% endfor %}
     </ul>
