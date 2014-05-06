@@ -37,13 +37,6 @@ def test_iterable(navbar):
     assert item_reentry.endpoint == 'home'
 
 
-def test_initializer(navbar):
-    @navbar.initializer
-    def initialize_more_items(nav):
-        return nav
-    assert navbar.initializers[0] is initialize_more_items
-
-
 def test_alias_item():
     navbar = NavigationBar('mybar', [
         Item(u'Home', 'home'),
