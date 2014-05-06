@@ -15,8 +15,8 @@ class Item(object):
                      the target url.
     :param args: optional. If this parameter be provided, it will be passed to
                  the ``url_for`` with ``endpoint`` together.
-                 Maybe this arguments need to be decided in the Flask app
-                 context, then this parameter could be a function to delay the
+                 This arguments may need to be decided in the Flask app
+                 context, so this parameter could be a function to delay the
                  execution.
     :param url: optional. If this parameter be provided, the target url of
                 this navigation will be it. The ``endpoint`` and ``args`` will
