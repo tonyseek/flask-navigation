@@ -14,7 +14,7 @@ def navbar():
 
 
 def test_attrs(navbar):
-    assert navbar.name == 'mybar'
+    assert navbar.__name__ == 'mybar'
     assert len(navbar.items) == 2
 
 

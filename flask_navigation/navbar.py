@@ -8,7 +8,7 @@ class NavigationBar(collections.Iterable):
     """The navigation bar object."""
 
     def __init__(self, name, items=None, alias=None):
-        self.name = name
+        self.__name__ = name
         self.items = ItemCollection(items or [])
         self.initializers = []
         self.alias = alias or {}

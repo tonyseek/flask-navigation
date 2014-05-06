@@ -56,4 +56,4 @@ class Navigation(object):
     def bind_bar(self, sender=None, **kwargs):
         """Binds a navigation bar into this extension instance."""
         bar = kwargs.pop('bar')
-        self.bars[bar.name] = bar
+        self.bars[bar.__name__] = bar
