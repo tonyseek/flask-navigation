@@ -37,6 +37,7 @@ class Item(object):
         self.html_attrs = {} if html_attrs is None else html_attrs
 
     def __html__(self):
+        # TODO move into standalone class
         attrs = dict(self.html_attrs)
 
         # adds ``active`` to class list
