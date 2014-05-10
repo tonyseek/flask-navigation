@@ -1,5 +1,5 @@
 from .navbar import NavigationBar
-from .item import Item, ItemReference
+from .item import Item
 from .utils import BoundTypeProperty
 from .signals import navbar_created
 
@@ -18,8 +18,6 @@ class Navigation(object):
     #:
     #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     Item = BoundTypeProperty('Item', Item)
-
-    ItemReference = ItemReference
 
     def __init__(self, app=None):
         self.bars = {}

@@ -1,15 +1,16 @@
 from pytest import fixture, raises
 from flask import Markup
 
-from flask.ext.navigation.item import Item, ItemReference
+from flask.ext.navigation.item import Item
 
 
 @fixture
 def items():
     items = {'biu': Item(u'Biu', endpoint='biu.biu'),
-             'boom1': Item(u'Boom', endpoint='biu.boom', args={'num': 1}),
-             'boom2': Item(u'Boom', endpoint='biu.boom',
-                           args=lambda: {'num': 2}),
+             'boom1': Item(u'Boom', name='boom1',
+                           endpoint='biu.boom', args={'num': 1}),
+             'boom2': Item(u'Boom', name='boom2',
+                           endpoint='biu.boom', args=lambda: {'num': 2}),
              'example': Item(u'Example', name='example',
                              external_url='//example.com')}
     return items
@@ -91,17 +92,8 @@ def test_ident(items):
     assert items['biu'].endpoint != items['boom1'].endpoint
     assert items['boom1'].endpoint == items['boom2'].endpoint
 
-    assert items['biu'].ident != items['boom1'].ident
-    assert items['boom1'].ident != items['boom2'].ident
-
-
-def test_item_reference():
-    assert ItemReference('foo').endpoint == 'foo'
-    assert ItemReference('foo').args == ()
-    assert ItemReference('foo') == ItemReference('foo', {})
-
-    assert ItemReference('bar', {'a': 1}).endpoint == 'bar'
-    assert ItemReference('bar', {'b': 2, 'a': 1}).args == (('a', 1), ('b', 2))
+    assert items['biu'].__name__ != items['boom1'].__name__
+    assert items['boom1'].__name__ != items['boom2'].__name__
 
 
 def test_html_representation(app, items):
