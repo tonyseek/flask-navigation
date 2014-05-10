@@ -29,11 +29,32 @@ class Item(object):
     name of a Flask view function.
     """
 
-    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None):
-        self.label = label
-        self.endpoint = endpoint
-        self._args = args
-        self._url = url
+    def __init__(self, label=None, endpoint=None, args=None, name=None,
+                 external_url=None, html_attrs=None):
+        # initialize name
+        if name is None:
+            # TODO check unique here
+            if endpoint is None:
+                raise ValueError('Without a endpoint, the name must be '
+                                 'explicit.')
+            self.__name__ = endpoint
+        else:
+            self.__name__ = name
+
+        # initialize url
+        if endpoint is None and external_url is None:
+            raise ValueError('The one of endpoint and external_url should be'
+                             ' provided.')
+        elif endpoint is not None and external_url is not None:
+            raise ValueError('The endpoint and external_url should not be '
+                             'provided at the same time.')
+        else:
+            self.endpoint = endpoint
+            self._args = args
+            self._url = external_url
+
+        # initialize label and html attributes
+        self.label = name if label is None else label
         self.html_attrs = {} if html_attrs is None else html_attrs
 
     def __html__(self):

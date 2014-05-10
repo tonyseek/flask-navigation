@@ -10,9 +10,36 @@ def items():
              'boom1': Item(u'Boom', endpoint='biu.boom', args={'num': 1}),
              'boom2': Item(u'Boom', endpoint='biu.boom',
                            args=lambda: {'num': 2}),
-             'example': Item(u'Example', endpoint='external.example',
-                             url='//example.com')}
+             'example': Item(u'Example', name='example',
+                             external_url='//example.com')}
     return items
+
+
+def test_creation(app):
+    # test implicit name
+    item = Item(u'Biu', endpoint='biu.biu')
+    assert item.__name__ == 'biu.biu'
+    assert item.endpoint == 'biu.biu'
+
+    # test name missing
+    with raises(ValueError) as e:
+        Item(external_url='//x.com')
+    assert 'must be explicit' in str(e.getrepr(style='no'))
+
+    # test explicit name
+    item = Item(u'Biu', endpoint='biu.biu', name='b')
+    assert item.__name__ == 'b'
+    assert item.endpoint == 'biu.biu'
+
+    # test url conflict
+    with raises(ValueError) as e:
+        Item(u'Biu', endpoint='biu.biu', external_url='//x.com')
+    assert 'at the same time' in str(e.getrepr(style='no'))
+
+    # test url missing
+    with raises(ValueError) as e:
+        Item(u'Biu', name='biu')
+    assert 'The one of' in str(e.getrepr(style='no'))
 
 
 def test_basic(app, items):

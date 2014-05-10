@@ -6,8 +6,8 @@ from .ext import nav
 bp = Blueprint('main', __name__)
 
 navbar_top = nav.Bar('top', [
-    nav.Item('Home', 'main.index'),
-    nav.Item('Latest News', 'main.news', {'page': 1}),
+    nav.Item('Home', endpoint='main.index'),
+    nav.Item('Latest News', endpoint='main.news', args={'page': 1}),
 ], alias={'index': nav.ItemReference('main.index')})
 
 
