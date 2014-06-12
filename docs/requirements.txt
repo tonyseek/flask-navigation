@@ -1,0 +1,2 @@
+pip-tools==0.3.4
+sphinx-kr-theme==0.1.0
