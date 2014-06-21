@@ -78,3 +78,109 @@ class BoundTypeProperty(object):
         if self.name not in ns:
             ns[self.name] = type(self.name, (self.cls,), {})
         return ns[self.name]
+
+
+class LazyProperty(object):
+    """The property which could be assigned a lazy value with callable object.
+
+    e.g.::
+
+        >>> class Spam(object):
+        ...     egg = LazyProperty('egg')
+        ...     foo = LazyProperty('foo', default=42)
+        ...     bar = LazyProperty('bar', cache=True)
+        >>>
+        >>> Spam.egg
+        LazyProperty('egg')
+        >>> spam = Spam()
+        >>>
+        >>> # fixed value
+        >>> spam.egg
+        Traceback (most recent call last):
+        ...
+        AttributeError: 'Spam' object has no attribute 'egg' and 'make_egg'
+        >>> spam.egg = 'abc'
+        >>> spam.egg
+        'abc'
+        >>> # lazy value
+        >>> spam.egg = lambda: 'def'
+        >>> spam.egg
+        'def'
+        >>> # default value
+        >>> spam.foo
+        42
+        >>> spam.foo = lambda: 43
+        >>> spam.foo
+        43
+        >>> # cached value
+        >>> _flag = 'new'
+        >>> spam.bar = lambda: _flag
+        >>> spam.bar
+        'new'
+        >>> _flag = 'old'
+        >>> spam.bar
+        'new'
+        >>> spam.make_bar()
+        'old'
+        >>>
+
+    :param name: the property name, which will be the cache key if the
+                 ``cache`` option is ``True``.
+    :param default: the optional default value. if nothing provided (even
+                    ``None``), the getting operation for missing value will
+                    cause ``AttributeError``.
+    :param cache: if ``True`` provided, the lazy value will only be calculated
+                  once. default: ``False``.
+    """
+
+    _missing = object()
+
+    def __init__(self, name, default=_missing, cache=False):
+        self.__name__ = name
+        self.default = default
+        self.cache = cache
+
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__, self.__name__)
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+
+        instance_ns = vars(instance)
+
+        if self.__name__ in instance_ns:
+            # final value is exists
+            value = instance_ns[self.__name__]
+        else:
+            if self.callable_name in instance_ns:
+                # callable object is exists
+                value = instance_ns[self.callable_name]()
+                if self.cache:
+                    # caches calling result as final value
+                    instance_ns[self.__name__] = value
+            elif self.default is not self._missing:
+                # default value is exists
+                value = self.default
+            else:
+                # nothing could be used
+                error_args = (
+                    owner.__name__, self.__name__, self.callable_name)
+                raise AttributeError(
+                    '%r object has no attribute %r and %r' % error_args)
+
+        return value
+
+    def __set__(self, instance, value):
+        instance_ns = vars(instance)
+        instance_ns.pop(self.__name__, None)
+        instance_ns.pop(self.callable_name, None)
+
+        if callable(value):
+            instance_ns[self.callable_name] = value
+        else:
+            instance_ns[self.__name__] = value
+
+    @property
+    def callable_name(self):
+        return 'make_%s' % self.__name__
