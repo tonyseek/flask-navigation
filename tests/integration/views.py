@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, render_template
+from flask import Blueprint, render_template
 
 from .ext import nav
 
@@ -6,19 +6,10 @@ from .ext import nav
 bp = Blueprint('main', __name__)
 
 navbar_top = nav.Bar('top', [
-    nav.Item('Home', 'main.index'),
-    nav.Item('Latest News', 'main.news', {'page': 1}),
-], alias={'index': nav.ItemReference('main.index')})
-
-
-@navbar_top.initializer
-def initialize_navbar_top(nav):
-    top = nav['top']
-    if len(top.items) > 2:
-        return
-    args = {'page': current_app.config['NEWS_SPECIAL_PAGE']}
-    item = nav.Item('Special News', 'main.news', args)
-    top.items.append(item)
+    nav.Item('Home', name='index', endpoint='main.index'),
+    nav.Item('Latest News', name='news', endpoint='main.news',
+             args={'page': 1}),
+])
 
 
 @bp.route('/')

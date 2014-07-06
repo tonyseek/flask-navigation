@@ -1,22 +1,27 @@
-import collections
-
 from pytest import fixture, raises
-from mock import Mock
 
-from flask.ext.navigation.item import ItemCollection, ItemReference
+from flask.ext.navigation.item import ItemCollection
 
 
-class Item(collections.namedtuple('Item', ['endpoint'])):
-    @property
-    def ident(self):
-        return self.endpoint, ()
+class FakeItem(object):
+    def __init__(self, name):
+        self.__name__ = name
+        self.endpoint = name
+
+    def __repr__(self):
+        return "Item(endpoint='%s')" % self.endpoint
+
+    def __eq__(self, other):
+        if not isinstance(other, FakeItem):
+            return NotImplemented
+        return self.__name__ == other.__name__
 
 
 @fixture
 def items():
-    items = {'lumpy': Item('lumpy'),
-             'nutty': Item('nutty'),
-             'cuddles': Item('cuddles')}
+    items = {'lumpy': FakeItem('lumpy'),
+             'nutty': FakeItem('nutty'),
+             'cuddles': FakeItem('cuddles')}
     return items
 
 
@@ -38,55 +43,44 @@ def test_sequence(items):
 
     c.append(items['cuddles'])
     assert len(c) == 1
-    assert c['cuddles'] == Item('cuddles')
-    assert c[0] == Item('cuddles')
+    assert c['cuddles'] == FakeItem('cuddles')
+    assert c[0] == FakeItem('cuddles')
 
     c.extend([items['nutty'], items['lumpy']])
     assert len(c) == 3
-    assert c['cuddles'] == Item('cuddles')
-    assert c['nutty'] == Item('nutty')
-    assert c['lumpy'] == Item('lumpy')
-    assert c[0] == Item('cuddles')
-    assert c[1] == Item('nutty')
-    assert c[2] == Item('lumpy')
+    assert c['cuddles'] == FakeItem('cuddles')
+    assert c['nutty'] == FakeItem('nutty')
+    assert c['lumpy'] == FakeItem('lumpy')
+    assert c[0] == FakeItem('cuddles')
+    assert c[1] == FakeItem('nutty')
+    assert c[2] == FakeItem('lumpy')
 
     del c[1]
     raises(KeyError, lambda: c['nutty'])
     raises(IndexError, lambda: c[2])
     assert len(c) == 2
-    assert c['cuddles'] == Item('cuddles')
-    assert c['lumpy'] == Item('lumpy')
-    assert c[0] == Item('cuddles')
-    assert c[1] == Item('lumpy')
+    assert c['cuddles'] == FakeItem('cuddles')
+    assert c['lumpy'] == FakeItem('lumpy')
+    assert c[0] == FakeItem('cuddles')
+    assert c[1] == FakeItem('lumpy')
 
     c.insert(0, items['nutty'])
     assert len(c) == 3
-    assert c[0] == Item('nutty')
-    assert c[1] == Item('cuddles')
-    assert c[2] == Item('lumpy')
+    assert c[0] == FakeItem('nutty')
+    assert c[1] == FakeItem('cuddles')
+    assert c[2] == FakeItem('lumpy')
 
-    c[2] = Item('happy-tree')
+    c[2] = FakeItem('happy-tree')
     assert len(c) == 3
-    assert c[2] == Item('happy-tree')
-    assert c['happy-tree'] == Item('happy-tree')
+    assert c[2] == FakeItem('happy-tree')
+    assert c['happy-tree'] == FakeItem('happy-tree')
     raises(KeyError, lambda: c['lumpy'])
 
     with raises(TypeError):
-        c['pu'] = Item('pu')
+        c['pu'] = FakeItem('pu')
 
     with raises(IndexError):
-        c[3] = Item('pu')
-
-
-def test_getitem_with_args():
-    item_with_args = Mock(endpoint='nutty', args={'i': 12},
-                          ident=ItemReference('nutty', {'i': 12}))
-    c = ItemCollection([item_with_args])
-
-    raises(KeyError, lambda: c['nutty'])
-    raises(KeyError, lambda: c['nutty', {'i': 1}])
-
-    assert c['nutty', {'i': 12}] == item_with_args
+        c[3] = FakeItem('pu')
 
 
 def test_iterable(items):

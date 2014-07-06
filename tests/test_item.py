@@ -1,18 +1,46 @@
 from pytest import fixture, raises
 from flask import Markup
 
-from flask.ext.navigation.item import Item, ItemReference
+from flask.ext.navigation.item import Item
 
 
 @fixture
 def items():
     items = {'biu': Item(u'Biu', endpoint='biu.biu'),
-             'boom1': Item(u'Boom', endpoint='biu.boom', args={'num': 1}),
-             'boom2': Item(u'Boom', endpoint='biu.boom',
-                           args=lambda: {'num': 2}),
-             'example': Item(u'Example', endpoint='external.example',
-                             url='//example.com')}
+             'boom1': Item(u'Boom', name='boom1',
+                           endpoint='biu.boom', args={'num': 1}),
+             'boom2': Item(u'Boom', name='boom2',
+                           endpoint='biu.boom', args=lambda: {'num': 2}),
+             'example': Item(u'Example', name='example',
+                             external_url='//example.com')}
     return items
+
+
+def test_creation(app):
+    # test implicit name
+    item = Item(u'Biu', endpoint='biu.biu')
+    assert item.__name__ == 'biu.biu'
+    assert item.endpoint == 'biu.biu'
+
+    # test name missing
+    with raises(ValueError) as e:
+        Item(external_url='//x.com')
+    assert 'must be explicit' in str(e.getrepr(style='no'))
+
+    # test explicit name
+    item = Item(u'Biu', endpoint='biu.biu', name='b')
+    assert item.__name__ == 'b'
+    assert item.endpoint == 'biu.biu'
+
+    # test url conflict
+    with raises(ValueError) as e:
+        Item(u'Biu', endpoint='biu.biu', external_url='//x.com')
+    assert 'at the same time' in str(e.getrepr(style='no'))
+
+    # test url missing
+    with raises(ValueError) as e:
+        Item(u'Biu', name='biu')
+    assert 'The one of' in str(e.getrepr(style='no'))
 
 
 def test_basic(app, items):
@@ -64,17 +92,8 @@ def test_ident(items):
     assert items['biu'].endpoint != items['boom1'].endpoint
     assert items['boom1'].endpoint == items['boom2'].endpoint
 
-    assert items['biu'].ident != items['boom1'].ident
-    assert items['boom1'].ident != items['boom2'].ident
-
-
-def test_item_reference():
-    assert ItemReference('foo').endpoint == 'foo'
-    assert ItemReference('foo').args == ()
-    assert ItemReference('foo') == ItemReference('foo', {})
-
-    assert ItemReference('bar', {'a': 1}).endpoint == 'bar'
-    assert ItemReference('bar', {'b': 2, 'a': 1}).args == (('a', 1), ('b', 2))
+    assert items['biu'].__name__ != items['boom1'].__name__
+    assert items['boom1'].__name__ != items['boom2'].__name__
 
 
 def test_html_representation(app, items):

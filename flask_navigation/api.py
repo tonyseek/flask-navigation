@@ -1,7 +1,5 @@
-from flask.signals import appcontext_pushed
-
 from .navbar import NavigationBar
-from .item import Item, ItemReference
+from .item import Item
 from .utils import BoundTypeProperty
 from .signals import navbar_created
 
@@ -20,8 +18,6 @@ class Navigation(object):
     #:
     #: :type: :class:`~flask.ext.navigation.utils.BoundTypeProperty`
     Item = BoundTypeProperty('Item', Item)
-
-    ItemReference = ItemReference
 
     def __init__(self, app=None):
         self.bars = {}
@@ -42,18 +38,10 @@ class Navigation(object):
 
         :param app: the :class:`flask.Flask` app instance.
         """
-        # connects app-level signals
-        appcontext_pushed.connect(self.initialize_bars, app)
         # integrate with jinja template
         app.add_template_global(self, 'nav')
-
-    def initialize_bars(self, sender=None, **kwargs):
-        """Calls the initializers of all bound navigation bars."""
-        for bar in self.bars.values():
-            for initializer in bar.initializers:
-                initializer(self)
 
     def bind_bar(self, sender=None, **kwargs):
         """Binds a navigation bar into this extension instance."""
         bar = kwargs.pop('bar')
-        self.bars[bar.name] = bar
+        self.bars[bar.__name__] = bar

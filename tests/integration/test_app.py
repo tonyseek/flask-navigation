@@ -23,12 +23,6 @@ def test_app(app):
     assert_navbar_exists(r)
     assert_active(r, 'Latest News')
 
-    r = r.click('Special News')
-    assert r.status == '200 OK'
-    assert 'News :: Page - 42' in r
-    assert_navbar_exists(r)
-    assert_active(r, 'Special News')
-
     r = r.click('Home')
     assert r.status == '200 OK'
     assert 'Welcome' in r
@@ -53,7 +47,6 @@ def test_alias(app):
 def assert_navbar_exists(r):
     assert 'Home' in r
     assert 'Latest News' in r
-    assert 'Special News' in r
 
 
 def assert_active(r, text):

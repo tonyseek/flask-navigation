@@ -2,7 +2,7 @@ import collections
 
 from flask import url_for, request, Markup
 
-from .utils import freeze_dict, join_html_attrs
+from .utils import join_html_attrs
 
 
 class Item(object):
@@ -15,8 +15,8 @@ class Item(object):
                      the target url.
     :param args: optional. If this parameter be provided, it will be passed to
                  the ``url_for`` with ``endpoint`` together.
-                 Maybe this arguments need to be decided in the Flask app
-                 context, then this parameter could be a function to delay the
+                 This arguments may need to be decided in the Flask app
+                 context, so this parameter could be a function to delay the
                  execution.
     :param url: optional. If this parameter be provided, the target url of
                 this navigation will be it. The ``endpoint`` and ``args`` will
@@ -29,14 +29,36 @@ class Item(object):
     name of a Flask view function.
     """
 
-    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None):
-        self.label = label
-        self.endpoint = endpoint
-        self._args = args
-        self._url = url
+    def __init__(self, label=None, endpoint=None, args=None, name=None,
+                 external_url=None, html_attrs=None):
+        # initialize name
+        if name is None:
+            # TODO check unique here
+            if endpoint is None:
+                raise ValueError('Without a endpoint, the name must be '
+                                 'explicit.')
+            self.__name__ = endpoint
+        else:
+            self.__name__ = name
+
+        # initialize url
+        if endpoint is None and external_url is None:
+            raise ValueError('The one of endpoint and external_url should be'
+                             ' provided.')
+        elif endpoint is not None and external_url is not None:
+            raise ValueError('The endpoint and external_url should not be '
+                             'provided at the same time.')
+        else:
+            self.endpoint = endpoint
+            self._args = args
+            self._url = external_url
+
+        # initialize label and html attributes
+        self.label = name if label is None else label
         self.html_attrs = {} if html_attrs is None else html_attrs
 
     def __html__(self):
+        # TODO move into standalone class
         attrs = dict(self.html_attrs)
 
         # adds ``active`` to class list
@@ -117,14 +139,6 @@ class Item(object):
         has_same_args = (request.view_args == self.args)
         return has_same_endpoint and has_same_args  # matches the endpoint
 
-    @property
-    def ident(self):
-        """The identity of this item.
-
-        :type: :class:`~flask.ext.navigation.Navigation.ItemReference`
-        """
-        return ItemReference(self.endpoint, self.args)
-
 
 class ItemCollection(collections.MutableSequence,
                      collections.Iterable):
@@ -161,26 +175,21 @@ class ItemCollection(collections.MutableSequence,
     def __getitem__(self, index):
         if isinstance(index, int):
             return self._items[index]
-
-        if isinstance(index, tuple):
-            endpoint, args = index
         else:
-            endpoint, args = index, {}
-        ident = ItemReference(endpoint, args)
-        return self._items_mapping[ident]
+            return self._items_mapping[index]  # gets by name
 
     def __setitem__(self, index, item):
         # remove the old reference
         old_item = self._items[index]
-        del self._items_mapping[old_item.ident]
+        del self._items_mapping[old_item.__name__]
 
         self._items[index] = item
-        self._items_mapping[item.ident] = item
+        self._items_mapping[item.__name__] = item
 
     def __delitem__(self, index):
         item = self[index]
         del self._items[index]
-        del self._items_mapping[item.ident]
+        del self._items_mapping[item.__name__]
 
     def __len__(self):
         return len(self._items)
@@ -190,19 +199,4 @@ class ItemCollection(collections.MutableSequence,
 
     def insert(self, index, item):
         self._items.insert(index, item)
-        self._items_mapping[item.ident] = item
-
-
-class ItemReference(collections.namedtuple('ItemReference', 'endpoint args')):
-    """The identity tuple of navigation item.
-
-    :param endpoint: the endpoint of view function.
-    :type endpoint: ``str``
-    :param args: the arguments of view function.
-    :type args: ``dict``
-    """
-
-    def __new__(cls, endpoint, args=()):
-        if isinstance(args, dict):
-            args = freeze_dict(args)
-        return super(cls, ItemReference).__new__(cls, endpoint, args)
+        self._items_mapping[item.__name__] = item
