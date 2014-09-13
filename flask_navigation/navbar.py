@@ -35,3 +35,11 @@ class NavigationBar(collections.Iterable):
         """Gets an item by its alias."""
         ident = self.alias[alias]
         return self.items[ident]
+
+    @property
+    def current_item(self):
+        '''Get the current active navigation Item if any'''
+        for item in self:
+            if item.is_active:
+                return item
+        return None

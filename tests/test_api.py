@@ -54,3 +54,28 @@ def test_initializer():
     with app.test_client() as c:
         url = c.get('/')
         assert url.data == b'/biu/42'
+
+
+def test_current_item():
+    app = Flask(__name__)
+
+    nav = Navigation()
+    nav.init_app(app)
+    news_item = Item(u'News', 'news')
+    navbar = nav.Bar('test_current', [
+        Item(u'Home', 'home'),
+        news_item,
+    ])
+
+    @app.route('/')
+    def home():
+        pass
+
+    @app.route('/news')
+    def news():
+        pass
+
+    assert navbar.current_item is None
+
+    with app.test_request_context('/news'):
+        assert navbar.current_item == news_item
