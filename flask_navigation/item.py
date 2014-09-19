@@ -29,12 +29,14 @@ class Item(object):
     name of a Flask view function.
     """
 
-    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None):
+    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None,
+                 items=None):
         self.label = label
         self.endpoint = endpoint
         self._args = args
         self._url = url
         self.html_attrs = {} if html_attrs is None else html_attrs
+        self.items = ItemCollection(items or None)
 
     def __html__(self):
         attrs = dict(self.html_attrs)

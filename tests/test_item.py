@@ -1,7 +1,7 @@
 from pytest import fixture, raises
 from flask import Markup
 
-from flask.ext.navigation.item import Item, ItemReference
+from flask.ext.navigation.item import Item, ItemReference, ItemCollection
 
 
 @fixture
@@ -35,6 +35,18 @@ def test_basic(app, items):
     assert items['example'].label == u'Example'
     assert items['example'].args == {}
     assert items['example'].url == '//example.com'
+
+
+def test_nested(app):
+    item_without = Item('Without Children', 'without_children')
+    assert isinstance(item_without.items, ItemCollection)
+    assert len(item_without.items) == 0
+
+    item_with = Item('Without Children', 'with_children', items=[
+        Item('Nested item', 'nested')
+    ])
+    assert isinstance(item_with.items, ItemCollection)
+    assert len(item_with.items) == 1
 
 
 def test_is_active(app, items):
