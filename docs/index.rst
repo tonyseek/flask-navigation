@@ -72,6 +72,44 @@ The pre-defined html attributes is available too::
         {% endfor %}
     </ul>
 
+
+Nested items
+------------
+
+Items are nestables:
+
+.. code-block:: python
+
+    nav.Bar('top', [
+        nav.Item('Home', 'index'),
+        nav.Item('Latest News', 'news', {'page': 1}),
+        nav.Item('Nestable', 'nestable', items=[
+            nav.Item('Nested 1', 'nested-1'),
+            nav.Item('Nested 2', 'nested-2'),
+        ]),
+    ])
+
+
+.. code-block:: html+jinja
+
+    <ul>
+        {% for item in nav.top %}
+        <li class="{{ 'active' if item.is_active else '' }}">
+            {{ item }}
+            {% if item.items %}
+            <ul>
+                {% for child in item.items %}
+                <li class="{{ 'active' if child.is_active else '' }}">
+                {{ child }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+
 API
 ---
 
