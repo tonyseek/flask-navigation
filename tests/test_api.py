@@ -79,3 +79,29 @@ def test_current_item():
 
     with app.test_request_context('/news'):
         assert navbar.current_item == news_item
+
+
+def test_current_item_nested():
+    app = Flask(__name__)
+
+    nav = Navigation()
+    nav.init_app(app)
+    item = Item('Nested item', 'nested')
+    navbar = nav.Bar('test_current', [
+        Item(u'Home', 'home'),
+        Item(u'News', 'news'),
+        Item(u'With Children', 'with_children', items=[item])
+    ])
+
+    @app.route('/')
+    def home():
+        pass
+
+    @app.route('/nested')
+    def nested():
+        pass
+
+    assert navbar.current_item is None
+
+    with app.test_request_context('/nested'):
+        assert navbar.current_item == item
