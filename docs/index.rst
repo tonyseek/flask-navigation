@@ -73,6 +73,13 @@ The pre-defined html attributes is available too::
     </ul>
 
 
+You can also have direct access to the current active item:
+
+.. code-block:: html+jinja
+
+    <h2>{{ nav.top.current_item.label }}</h2>
+
+
 Nested items
 ------------
 

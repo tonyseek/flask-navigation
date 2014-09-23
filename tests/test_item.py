@@ -42,7 +42,7 @@ def test_nested(app):
     assert isinstance(item_without.items, ItemCollection)
     assert len(item_without.items) == 0
 
-    item_with = Item('Without Children', 'with_children', items=[
+    item_with = Item('With Children', 'with_children', items=[
         Item('Nested item', 'nested')
     ])
     assert isinstance(item_with.items, ItemCollection)
