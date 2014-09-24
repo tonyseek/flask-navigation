@@ -38,7 +38,10 @@ class NavigationBar(collections.Iterable):
 
     @property
     def current_item(self):
-        '''Get the current active navigation Item if any'''
+        """Get the current active navigation Item if any.
+
+        .. versionadded:: 0.2.0
+        """
         return self._get_current_item(self)
 
     def _get_current_item(self, items):
