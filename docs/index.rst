@@ -146,3 +146,9 @@ Utilities
 
 .. autoclass:: flask.ext.navigation.utils.BoundTypeProperty
    :members:
+
+
+Release Changes
+---------------
+
+.. include:: ../CHANGES

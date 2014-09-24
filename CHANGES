@@ -1,0 +1,19 @@
+Release 0.2.0 (Sep 24, 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Implemented the HTML representation protocol of MarkupSafe. We can render
+  items in Jinja 2 templates directly now.
+- Refactored the ``is_active`` implementation. We can use the extracted APIs
+  such as ``is_internal`` now.
+
+Thanks for `Axel Haustant <https://github.com/noirbizarre>`_ who contributed
+those features:
+
+- Added support to create nested items. (by )
+- Added support to access current item from navigation bar. (by Axel Haustant)
+
+
+Release 0.1.0 (Apr 22, 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- First public release.
