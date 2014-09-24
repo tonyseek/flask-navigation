@@ -1,8 +1,8 @@
 import collections
 
-from flask import url_for, request
+from flask import url_for, request, Markup
 
-from .utils import freeze_dict
+from .utils import freeze_dict, join_html_attrs
 
 
 class Item(object):
@@ -21,17 +21,48 @@ class Item(object):
     :param url: optional. If this parameter be provided, the target url of
                 this navigation will be it. The ``endpoint`` and ``args`` will
                 not been used to generate url.
+    :param html_attrs: optional. This :class:`dict` will be used for
+                       representing html.
 
     The ``endpoint`` is the identity name of this navigation item. It will be
     unique in whole application. In mostly situation, it should be a endpoint
     name of a Flask view function.
     """
 
-    def __init__(self, label, endpoint, args=None, url=None):
+    def __init__(self, label, endpoint, args=None, url=None, html_attrs=None,
+                 items=None):
         self.label = label
         self.endpoint = endpoint
         self._args = args
         self._url = url
+        self.html_attrs = {} if html_attrs is None else html_attrs
+        self.items = ItemCollection(items or None)
+
+    def __html__(self):
+        attrs = dict(self.html_attrs)
+
+        # adds ``active`` to class list
+        html_class = attrs.get('class', [])
+        if self.is_active:
+            html_class.append('active')
+
+        # joins class list
+        attrs['class'] = ' '.join(html_class)
+        if not attrs['class']:
+            del attrs['class']
+        attrs['href'] = self.url
+        attrs_template, attrs_values = join_html_attrs(attrs)
+
+        return Markup('<a %s>{label}</a>' % attrs_template).format(
+            *attrs_values, label=self.label)
+
+    def __html_format__(self, format_spec):
+        if format_spec == 'li':
+            li_attrs = Markup(' class="active"') if self.is_active else ''
+            return Markup('<li{0}>{1}</li>').format(li_attrs, self.__html__())
+        elif format_spec:
+            raise ValueError('Invalid format spec')
+        return self.__html__()
 
     @property
     def args(self):
@@ -59,16 +90,34 @@ class Item(object):
 
         :type: :class:`str`
         """
-        if self._url is None:
+        if self.is_internal:
             return url_for(self.endpoint, **self.args)
         return self._url
 
     @property
     def is_active(self):
-        is_internal = (self._url is None)
+        """``True`` if the item should be presented as active, and ``False``
+        always if the request context is not bound.
+        """
+        return bool(request and self.is_current)
+
+    @property
+    def is_internal(self):
+        """``True`` if the target url is internal of current app."""
+        return self._url is None
+
+    @property
+    def is_current(self):
+        """``True`` if current request has same endpoint with the item.
+
+        The property should be used in a bound request context, or the
+        :class:`RuntimeError` may be raised.
+        """
+        if not self.is_internal:
+            return False  # always false for external url
         has_same_endpoint = (request.endpoint == self.endpoint)
         has_same_args = (request.view_args == self.args)
-        return is_internal and has_same_endpoint and has_same_args
+        return has_same_endpoint and has_same_args  # matches the endpoint
 
     @property
     def ident(self):

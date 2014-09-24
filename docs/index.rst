@@ -29,7 +29,7 @@ Create Navigation Bar
 
 ::
 
-    navbar_top = nav.Bar('top', [
+    nav.Bar('top', [
         nav.Item('Home', 'index'),
         nav.Item('Latest News', 'news', {'page': 1}),
     ])
@@ -48,11 +48,74 @@ The created navigation bars are accessible in any template with app context
 
     <ul>
         {% for item in nav.top %}
-        <li class="{{ 'current' if item.is_active else '' }}">
+        <li class="{{ 'active' if item.is_active else '' }}">
             <a href="{{ item.url }}">{{ item.label }}</a>
         </li>
         {% endfor %}
     </ul>
+
+The pre-defined html attributes is available too::
+
+    nav.Bar('top', [
+        nav.Item('Home', 'index', html_attrs={'class': ['home']}),
+        nav.Item('Latest News', 'news', {'page': 1},
+                 html_attrs={'class': ['news']}),
+    ])
+
+.. code-block:: html+jinja
+
+    <ul>
+        {% for item in nav.top %}
+        <li class="{{ 'active' if item.is_active else '' }}">
+            {{ item }}
+        </li>
+        {% endfor %}
+    </ul>
+
+
+You can also have direct access to the current active item:
+
+.. code-block:: html+jinja
+
+    <h2>{{ nav.top.current_item.label }}</h2>
+
+
+Nested items
+------------
+
+Items are nestables:
+
+.. code-block:: python
+
+    nav.Bar('top', [
+        nav.Item('Home', 'index'),
+        nav.Item('Latest News', 'news', {'page': 1}),
+        nav.Item('Nestable', 'nestable', items=[
+            nav.Item('Nested 1', 'nested-1'),
+            nav.Item('Nested 2', 'nested-2'),
+        ]),
+    ])
+
+
+.. code-block:: html+jinja
+
+    <ul>
+        {% for item in nav.top %}
+        <li class="{{ 'active' if item.is_active else '' }}">
+            {{ item }}
+            {% if item.items %}
+            <ul>
+                {% for child in item.items %}
+                <li class="{{ 'active' if child.is_active else '' }}">
+                {{ child }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
 
 API
 ---
@@ -83,3 +146,9 @@ Utilities
 
 .. autoclass:: flask.ext.navigation.utils.BoundTypeProperty
    :members:
+
+
+Release Changes
+---------------
+
+.. include:: ../CHANGES

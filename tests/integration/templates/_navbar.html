@@ -1,7 +1,7 @@
 <ul>
   {%- for item in nav.top %}
   <li class="{{ 'active' if item.is_active else '' }}">
-    <a href="{{ item.url }}">{{ item.label }}</a>
+    {{ item }}
   </li>
   {%- endfor %}
 </ul>

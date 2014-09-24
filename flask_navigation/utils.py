@@ -1,4 +1,5 @@
 import operator
+import collections
 
 
 def freeze_dict(dict_):
@@ -14,6 +15,22 @@ def freeze_dict(dict_):
     pairs = dict_.items()
     key_getter = operator.itemgetter(0)
     return tuple(sorted(pairs, key=key_getter))
+
+
+def join_html_attrs(attrs):
+    """Joins the map structure into HTML attributes.
+
+    The return value is a 2-tuple ``(template, ordered_values)``. It should be
+    passed into :class:`markupsafe.Markup` to prevent XSS attacked.
+
+    e.g.::
+
+        >>> join_html_attrs({'href': '/', 'data-active': 'true'})
+        ('data-active="{0}" href="{1}"', ['true', '/'])
+    """
+    attrs = collections.OrderedDict(freeze_dict(attrs or {}))
+    template = ' '.join('%s="{%d}"' % (k, i) for i, k in enumerate(attrs))
+    return template, list(attrs.values())
 
 
 class BoundTypeProperty(object):

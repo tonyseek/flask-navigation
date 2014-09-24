@@ -11,7 +11,7 @@ def read_long_description():
 setup(
     name="Flask-Navigation",
     packages=find_packages(exclude=["tests", "docs"]),
-    version='0.1.0',
+    version='0.2.0',
     description="The navigation of Flask application.",
     long_description=read_long_description(),
     author="Jiangge Zhang",

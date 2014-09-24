@@ -1,6 +1,7 @@
-from pytest import fixture
+from pytest import fixture, raises
+from flask import Markup
 
-from flask.ext.navigation.item import Item, ItemReference
+from flask.ext.navigation.item import Item, ItemReference, ItemCollection
 
 
 @fixture
@@ -34,6 +35,18 @@ def test_basic(app, items):
     assert items['example'].label == u'Example'
     assert items['example'].args == {}
     assert items['example'].url == '//example.com'
+
+
+def test_nested(app):
+    item_without = Item('Without Children', 'without_children')
+    assert isinstance(item_without.items, ItemCollection)
+    assert len(item_without.items) == 0
+
+    item_with = Item('With Children', 'with_children', items=[
+        Item('Nested item', 'nested')
+    ])
+    assert isinstance(item_with.items, ItemCollection)
+    assert len(item_with.items) == 1
 
 
 def test_is_active(app, items):
@@ -74,3 +87,49 @@ def test_item_reference():
 
     assert ItemReference('bar', {'a': 1}).endpoint == 'bar'
     assert ItemReference('bar', {'b': 2, 'a': 1}).args == (('a', 1), ('b', 2))
+
+
+def test_html_representation(app, items):
+    with app.test_client() as client:
+        client.get('/biu/biu')
+
+        # without format_spec
+        assert str(Markup(items['biu'])) == \
+            '<a class="active" href="/biu/biu">Biu</a>'
+        assert str(Markup(items['boom1'])) == \
+            '<a href="/biu/boom/1">Boom</a>'
+
+        # "li" as format_spec
+        assert str(Markup('{0:li}').format(items['biu'])) == \
+            '<li class="active"><a class="active" href="/biu/biu">Biu</a></li>'
+        assert str(Markup('{0:li}').format(items['boom1'])) == \
+            '<li><a href="/biu/boom/1">Boom</a></li>'
+
+        # default format_spec
+        assert str(Markup('{0:}').format(items['biu'])) == \
+            '<a class="active" href="/biu/biu">Biu</a>'
+        assert str(Markup('{0:}').format(items['boom1'])) == \
+            '<a href="/biu/boom/1">Boom</a>'
+
+        # invalid format_spec
+        with raises(ValueError):
+            str(Markup('{0:foo}').format(items['biu']))
+
+
+def test_html_representation_with_class(app):
+    biu_with_class = Item(
+        u'Biu', endpoint='biu.biu',
+        html_attrs={'class': ['icon', 'icon-biu'], 'data-icon': 'biu'})
+    boom_with_class = Item(
+        u'Boom', endpoint='biu.boom', args={'num': 1},
+        html_attrs={'class': ['icon', 'icon-boom'], 'data-icon': 'boom'})
+
+    with app.test_client() as client:
+        client.get('/biu/biu')
+
+        assert str(Markup(biu_with_class)) == (
+            '<a class="icon icon-biu active" data-icon="biu"'
+            ' href="/biu/biu">Biu</a>')
+        assert str(Markup(boom_with_class)) == (
+            '<a class="icon icon-boom" data-icon="boom"'
+            ' href="/biu/boom/1">Boom</a>')
