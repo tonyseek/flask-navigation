@@ -43,15 +43,15 @@ You can send a pull reueqst on
 .. |Build Status| image:: https://travis-ci.org/tonyseek/flask-navigation.svg?branch=master,develop
    :target: https://travis-ci.org/tonyseek/flask-navigation
    :alt: Build Status
-.. |Coverage Status| image:: https://img.shields.io/coveralls/tonyseek/flask-navigation/develop.svg
+.. |Coverage Status| image:: https://img.shields.io/coveralls/tonyseek/flask-navigation/develop.svg?style=flat
    :target: https://coveralls.io/r/tonyseek/flask-navigation
    :alt: Coverage Status
-.. |Wheel Status| image:: https://pypip.in/wheel/Flask-Navigation/badge.svg
+.. |Wheel Status| image:: https://pypip.in/wheel/Flask-Navigation/badge.svg?style=flat
    :target: https://pypi.python.org/pypi/Flask-Navigation
    :alt: Wheel Status
-.. |PyPI Version| image:: https://img.shields.io/pypi/v/Flask-Navigation.svg
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/Flask-Navigation.svg?style=flat
    :target: https://pypi.python.org/pypi/Flask-Navigation
    :alt: PyPI Version
-.. |PyPI Downloads| image:: https://img.shields.io/pypi/dm/Flask-Navigation.svg
+.. |PyPI Downloads| image:: https://img.shields.io/pypi/dm/Flask-Navigation.svg?style=flat
    :target: https://pypi.python.org/pypi/Flask-Navigation
    :alt: Downloads
