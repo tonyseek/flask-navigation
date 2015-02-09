@@ -9,8 +9,8 @@ Release 0.2.0 (Sep 24, 2014)
 Thanks for `Axel Haustant <https://github.com/noirbizarre>`_ who contributed
 those features:
 
-- Added support to create nested items. (by )
-- Added support to access current item from navigation bar. (by Axel Haustant)
+- Added support to create nested items.
+- Added support to access current item from navigation bar.
 
 
 Release 0.1.0 (Apr 22, 2014)
