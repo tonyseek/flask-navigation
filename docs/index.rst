@@ -1,6 +1,9 @@
 Flask-Navigation
 ================
 
+Build navigation bars in your Flask applications.
+
+
 Installation
 ------------
 
@@ -8,8 +11,9 @@ Installation
 
     $ pip install Flask-Navigation
 
-Set Up
-------
+
+Configuration
+-------------
 
 Just like the most of Flask extension::
 
@@ -23,6 +27,7 @@ Or use the app factory pattern::
 
     nav = Navigation()
     nav.init_app(app)
+
 
 Create Navigation Bar
 ---------------------
@@ -80,7 +85,7 @@ You can also have direct access to the current active item:
     <h2>{{ nav.top.current_item.label }}</h2>
 
 
-Nested items
+Nested Items
 ------------
 
 Items are nestables:
