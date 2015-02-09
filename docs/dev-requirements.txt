@@ -1,8 +1,0 @@
--e ..
-docutils==0.11
-Jinja2==2.7.3
-MarkupSafe==0.23
-pip-tools==0.3.4
-Pygments==1.6
-sphinx-kr-theme==0.1.0
-Sphinx==1.2.2
