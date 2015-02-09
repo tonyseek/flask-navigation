@@ -12,9 +12,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sphinx_kr_theme
-
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -83,7 +80,7 @@ exclude_patterns = ['_build']
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+#pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -103,13 +100,14 @@ html_theme = 'kr_small'
 # documentation.
 html_theme_options = {
     'github_fork': 'tonyseek/flask-navigation',
+    'github_fork_ribbon': 'http://aral.github.com/fork-me-on-github-retina-ribbons/right-grey@2x.png',
     'index_logo': 'index-logo@2x.png',
-    # a hack for retina logo
-    'index_logo_height': '50px; background-size: 340px 50px',
+    'index_logo_width': '340px',
+    'index_logo_height': '50px',
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_kr_theme.get_html_theme_path()]
+#html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
