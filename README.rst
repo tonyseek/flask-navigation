@@ -36,7 +36,7 @@ If you want to report bugs or request features, please create issues on
 Contributes
 -----------
 
-You can send a pull reueqst on
+You can send a pull request on
 `GitHub <https://github.com/tonyseek/flask-navigation/pulls>`_.
 
 
