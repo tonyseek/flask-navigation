@@ -46,7 +46,7 @@ You can send a pull request on
 .. |Coverage Status| image:: https://img.shields.io/coveralls/tonyseek/flask-navigation/develop.svg?style=flat
    :target: https://coveralls.io/r/tonyseek/flask-navigation
    :alt: Coverage Status
-.. |Wheel Status| image:: https://pypip.in/wheel/Flask-Navigation/badge.svg?style=flat
+.. |Wheel Status| image:: https://img.shields.io/pypi/wheel/Flask-Navigation.svg?style=flat
    :target: https://pypi.python.org/pypi/Flask-Navigation
    :alt: Wheel Status
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/Flask-Navigation.svg?style=flat
